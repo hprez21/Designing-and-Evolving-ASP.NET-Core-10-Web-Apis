@@ -3,10 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace ApiEvolutionLab.DTOs;
 
 public class CreateProductRequest
-{
-    //[Required]
-    //string Sku { get; set; }
-
+{    
     [Required]
     [StringLength(200, MinimumLength = 1)]
     public string Name { get; set; } = string.Empty;

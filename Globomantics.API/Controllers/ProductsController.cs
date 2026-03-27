@@ -107,31 +107,7 @@ public class ProductsController : ControllerBase
         existing.CategoryId = request.CategoryId;
 
         return Ok(MapToResponse(existing));
-    }
-
-    //// TODO: remove before next release — added during sprint 4 for the data team
-    //// Returns a flat CSV-friendly representation of a product for bulk exports.
-    //// Never formally reviewed; response shape has NOT been agreed with API consumers.
-    //[HttpGet("{id:guid}/export")]
-    //public IActionResult ExportProduct(Guid id)
-    //{
-    //    if (!InMemoryCatalogStore.Products.TryGetValue(id, out var product))
-    //        return NotFound();
-
-    //    InMemoryCatalogStore.Categories.TryGetValue(product.CategoryId, out var category);
-
-    //    var export = new
-    //    {
-    //        product_id    = product.Id.ToString(),
-    //        product_name  = product.Name,
-    //        unit_price    = product.Price,
-    //        category      = category?.Name ?? "Uncategorized",
-    //        is_active     = product.IsActive,
-    //        created_utc   = product.CreatedAt.ToString("o")
-    //    };
-
-    //    return Ok(export);
-    //}
+    }    
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

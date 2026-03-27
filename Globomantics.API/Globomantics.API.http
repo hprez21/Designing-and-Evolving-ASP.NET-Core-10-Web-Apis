@@ -1,6 +1,2 @@
 @Globomantics.API_HostAddress = http://localhost:5038
 
-GET {{Globomantics.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

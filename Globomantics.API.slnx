@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="Globomantics.API/Globomantics.API.csproj" />
+  <Project Path="Globomantics.App/Globomantics.App.csproj" Id="799dceb4-5dfa-4762-86e4-699cb4ab390f" />
 </Solution>

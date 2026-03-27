@@ -8,8 +8,5 @@ public class Product
     public decimal Price { get; set; }
     public Guid CategoryId { get; set; }
     public DateTime CreatedAt { get; set; }
-    public bool IsActive { get; set; } = true;
-    public double? AverageRating { get; set; }
-    public int ReviewCount { get; set; }
-    public List<string> Tags { get; set; } = [];
+    public bool IsActive { get; set; } = true;    
 }

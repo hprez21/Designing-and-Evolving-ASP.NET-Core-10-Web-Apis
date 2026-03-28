@@ -16,4 +16,6 @@ public class CreateProductRequest
 
     [Required]
     public Guid CategoryId { get; set; }
+
+    public List<string>? Tags { get; set; }
 }

@@ -49,7 +49,10 @@ public static class InMemoryCatalogStore
                 Description = "Noise-cancelling over-ear headphones",
                 Price = 79.99m,
                 CategoryId = electronics.Id,
-                CreatedAt = new DateTime(2025, 1, 15, 10, 0, 0, DateTimeKind.Utc),                
+                CreatedAt = new DateTime(2025, 1, 15, 10, 0, 0, DateTimeKind.Utc),
+                AverageRating = 4.5,
+                ReviewCount = 128
+
             },
             new Product
             {
@@ -58,7 +61,9 @@ public static class InMemoryCatalogStore
                 Description = "A Handbook of Agile Software Craftsmanship by Robert C. Martin",
                 Price = 34.99m,
                 CategoryId = books.Id,
-                CreatedAt = new DateTime(2025, 2, 20, 14, 30, 0, DateTimeKind.Utc),                
+                CreatedAt = new DateTime(2025, 2, 20, 14, 30, 0, DateTimeKind.Utc),
+                AverageRating = 4.3,
+                ReviewCount = 32
             },
             new Product
             {
@@ -67,7 +72,9 @@ public static class InMemoryCatalogStore
                 Description = "100% organic cotton crew neck t-shirt",
                 Price = 19.99m,
                 CategoryId = clothing.Id,
-                CreatedAt = new DateTime(2025, 3, 10, 9, 15, 0, DateTimeKind.Utc),                
+                CreatedAt = new DateTime(2025, 3, 10, 9, 15, 0, DateTimeKind.Utc),
+                AverageRating = null,
+                ReviewCount = 0
             },
             new Product
             {
@@ -76,7 +83,9 @@ public static class InMemoryCatalogStore
                 Description = "A plain blank notebook for writing, sketching, or note-taking",
                 Price = 4.99m,
                 CategoryId = books.Id,
-                CreatedAt = new DateTime(2025, 4, 1, 8, 0, 0, DateTimeKind.Utc),                
+                CreatedAt = new DateTime(2025, 4, 1, 8, 0, 0, DateTimeKind.Utc),
+                AverageRating = null,
+                ReviewCount = 0
             }
         };
 

@@ -1,2 +1,40 @@
 @Globomantics.API_HostAddress = http://localhost:5038
 
+### API verification without sending tags
+POST {{Globomantics.API_HostAddress}}/products
+Content-Type: application/json
+
+{
+    "name": "USB Cable",
+    "price": 9.99,
+    "categoryId": "a1b2c3d4-0001-0001-0001-000000000001"
+}
+
+### API verification sending tags
+POST {{Globomantics.API_HostAddress}}/products
+Content-Type: application/json
+
+{
+    "name": "Mechanical Keyboard",
+    "price": 149.99,
+    "categoryId": "a1b2c3d4-0001-0001-0001-000000000001",
+    "tags": ["keyboard", "mechanical", "gaming"]
+}
+
+
+### Partial update — only change the price (PATCH)
+PATCH {{Globomantics.API_HostAddress}}/products/b2c3d4e5-0002-0002-0002-000000000001
+Content-Type: application/merge-patch+json
+
+{
+    "price": 89.99
+}
+
+### Partial update — clear description (set to null)
+PATCH {{Globomantics.API_HostAddress}}/products/b2c3d4e5-0002-0002-0002-000000000001
+Content-Type: application/merge-patch+json
+
+{
+    "description": null
+}
+

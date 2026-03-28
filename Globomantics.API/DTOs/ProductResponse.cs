@@ -8,5 +8,9 @@ public class ProductResponse
     public decimal Price { get; set; }    
     public Guid CategoryId { get; set; }
     public string? CategoryName { get; set; }
-    public DateTime CreatedAt { get; set; }    
+    public DateTime CreatedAt { get; set; }
+    public double? AverageRating { get; set; }
+    public int ReviewCount { get; set; }
+    public List<string> Tags { get; set; } = [];
+
 }

@@ -38,3 +38,5 @@ Content-Type: application/merge-patch+json
     "description": null
 }
 
+### API V1 status check
+GET {{Globomantics.API_HostAddress}}/products?api-version=v1

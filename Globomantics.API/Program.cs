@@ -1,3 +1,4 @@
+using Globomantics.API.Middleware;
 using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
 
@@ -22,6 +23,9 @@ app.UseStatusCodePages();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
+
+app.UseMiddleware<DeprecationHeaderMiddleware>();
+
 app.MapControllers();
 
 app.Run();

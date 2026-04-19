@@ -1,6 +1,8 @@
 using ApiEvolutionLab.DTOs;
 using Globomantics.API.Data;
 using Globomantics.API.DTOs;
+using Globomantics.API.DTOs.V1;
+using Globomantics.API.Mappers;
 using Globomantics.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -13,49 +15,29 @@ namespace Globomantics.API.Controllers;
 public class ProductsController : ControllerBase
 {
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ProductResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<ProductResponseV1>), StatusCodes.Status200OK)]
     public IActionResult GetAll()
     {
         var products = InMemoryCatalogStore.Products.Values
-            .Select(MapToResponse)
+            .Select(ProductMapper.ToV1Response)
             .ToList();
 
         return Ok(products);
     }
 
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProductResponseV1), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetById(Guid id)
     {
         if (!InMemoryCatalogStore.Products.TryGetValue(id, out var product))
             return NotFound();
 
-        return Ok(MapToResponse(product));
+        return Ok(ProductMapper.ToV1Response(product));
     }
 
-    [HttpPut("{id:guid}/price")]
-    [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
-    public IActionResult UpdatePrice(Guid id, [FromQuery] decimal price)
-    {
-        if (!InMemoryCatalogStore.Products.TryGetValue(id, out var existing))
-            return NotFound();
-
-        if (price <= 0)
-            return BadRequest(new ProblemDetails
-            {
-                Title = "Invalid price",
-                Detail = "Price must be greater than zero.",
-                Status = StatusCodes.Status400BadRequest
-            });
-
-        existing.Price = price;
-
-        return NoContent();
-    }
-
-
-    [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status201Created)]
+    [HttpPost]
+    [ProducesResponseType(typeof(ProductResponseV1), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Create([FromBody] CreateProductRequest request)
     {
@@ -73,6 +55,7 @@ public class ProductsController : ControllerBase
             Name = request.Name,
             Description = request.Description,
             Price = request.Price,
+            Pricing = new Pricing { BasePrice = request.Price },
             CategoryId = request.CategoryId,
             CreatedAt = DateTime.UtcNow,
             Tags = request.Tags ?? []
@@ -83,11 +66,11 @@ public class ProductsController : ControllerBase
         return CreatedAtAction(
             nameof(GetById),
             new { id = product.Id },
-            MapToResponse(product));
+            ProductMapper.ToV1Response(product));
     }
 
     [HttpPut("{id:guid}")]
-    [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProductResponseV1), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Update(Guid id, [FromBody] UpdateProductRequest request)
@@ -106,15 +89,26 @@ public class ProductsController : ControllerBase
         existing.Name = request.Name;
         existing.Description = request.Description;
         existing.Price = request.Price;
+        existing.Pricing = new Pricing { BasePrice = request.Price };
         existing.CategoryId = request.CategoryId;
 
-        return Ok(MapToResponse(existing));
+        return Ok(ProductMapper.ToV1Response(existing));
     }
 
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult Delete(Guid id)
+    {
+        if (!InMemoryCatalogStore.Products.TryRemove(id, out _))
+            return NotFound();
+
+        return NoContent();
+    }
 
     [HttpPatch("{id:guid}")]
     [Consumes("application/merge-patch+json")]
-    [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProductResponseV1), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Patch(Guid id, [FromBody] JsonElement patchDocument)
@@ -153,6 +147,7 @@ public class ProductsController : ControllerBase
                     Status = StatusCodes.Status400BadRequest
                 });
             existing.Price = price;
+            existing.Pricing = new Pricing { BasePrice = price };
         }
 
         if (patchDocument.TryGetProperty("categoryId", out var catEl))
@@ -175,39 +170,6 @@ public class ProductsController : ControllerBase
                 : tagsEl.EnumerateArray().Select(e => e.GetString()!).ToList();
         }
 
-        return Ok(MapToResponse(existing));
-    }
-
-
-
-
-    [HttpDelete("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult Delete(Guid id)
-    {
-        if (!InMemoryCatalogStore.Products.TryRemove(id, out _))
-            return NotFound();
-
-        return NoContent();
-    }
-
-    private static ProductResponse MapToResponse(Product product)
-    {
-        InMemoryCatalogStore.Categories.TryGetValue(product.CategoryId, out var category);
-
-        return new ProductResponse
-        {
-            Id = product.Id,
-            Name = product.Name,
-            Description = product.Description,
-            Price = product.Price,
-            CategoryId = product.CategoryId,
-            CategoryName = category?.Name,
-            CreatedAt = product.CreatedAt,
-            AverageRating = product.AverageRating,
-            ReviewCount = product.ReviewCount,
-            Tags = product.Tags
-        };
+        return Ok(ProductMapper.ToV1Response(existing));
     }
 }

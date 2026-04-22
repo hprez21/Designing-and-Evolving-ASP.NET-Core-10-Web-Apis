@@ -1,43 +1,43 @@
 using ApiEvolutionLab.DTOs;
 using Globomantics.API.Data;
 using Globomantics.API.DTOs;
-using Globomantics.API.DTOs.V1;
+using Globomantics.API.DTOs.V2;
 using Globomantics.API.Mappers;
 using Globomantics.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
-namespace Globomantics.API.Controllers;
+namespace Globomantics.API.Controllers.V2;
 
 [ApiController]
-[Route("[controller]")]
+[Route("v2/products")]
 [Produces("application/json")]
-public class ProductsController : ControllerBase
+public class ProductsV2Controller : ControllerBase
 {
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ProductResponseV1>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<ProductResponseV2>), StatusCodes.Status200OK)]
     public IActionResult GetAll()
     {
         var products = InMemoryCatalogStore.Products.Values
-            .Select(ProductMapper.ToV1Response)
+            .Select(ProductMapper.ToV2Response)
             .ToList();
 
         return Ok(products);
     }
 
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(ProductResponseV1), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProductResponseV2), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetById(Guid id)
     {
         if (!InMemoryCatalogStore.Products.TryGetValue(id, out var product))
             return NotFound();
 
-        return Ok(ProductMapper.ToV1Response(product));
+        return Ok(ProductMapper.ToV2Response(product));
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(ProductResponseV1), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProductResponseV2), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Create([FromBody] CreateProductRequest request)
     {
@@ -63,14 +63,11 @@ public class ProductsController : ControllerBase
 
         InMemoryCatalogStore.Products[product.Id] = product;
 
-        return CreatedAtAction(
-            nameof(GetById),
-            new { id = product.Id },
-            ProductMapper.ToV1Response(product));
+        return Created($"/products/{product.Id}?api-version=2.0", ProductMapper.ToV2Response(product));
     }
 
     [HttpPut("{id:guid}")]
-    [ProducesResponseType(typeof(ProductResponseV1), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProductResponseV2), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Update(Guid id, [FromBody] UpdateProductRequest request)
@@ -92,7 +89,7 @@ public class ProductsController : ControllerBase
         existing.Pricing = new Pricing { BasePrice = request.Price };
         existing.CategoryId = request.CategoryId;
 
-        return Ok(ProductMapper.ToV1Response(existing));
+        return Ok(ProductMapper.ToV2Response(existing));
     }
 
     [HttpDelete("{id:guid}")]
@@ -108,7 +105,7 @@ public class ProductsController : ControllerBase
 
     [HttpPatch("{id:guid}")]
     [Consumes("application/merge-patch+json")]
-    [ProducesResponseType(typeof(ProductResponseV1), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProductResponseV2), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Patch(Guid id, [FromBody] JsonElement patchDocument)
@@ -170,6 +167,6 @@ public class ProductsController : ControllerBase
                 : tagsEl.EnumerateArray().Select(e => e.GetString()!).ToList();
         }
 
-        return Ok(ProductMapper.ToV1Response(existing));
+        return Ok(ProductMapper.ToV2Response(existing));
     }
 }

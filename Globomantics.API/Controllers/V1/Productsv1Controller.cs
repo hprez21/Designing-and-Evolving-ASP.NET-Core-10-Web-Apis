@@ -102,7 +102,7 @@ public class Productsv1Controller : ControllerBase
 
     [HttpDelete("{id:guid}")]
     [EndpointGroupName("v1")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult Delete(Guid id)
     {

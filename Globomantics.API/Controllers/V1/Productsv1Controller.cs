@@ -12,9 +12,11 @@ namespace Globomantics.API.Controllers.V1;
 [ApiController]
 [Route("v1/products")]
 [Produces("application/json")]
+[Tags("Products")]
 public class Productsv1Controller : ControllerBase
 {
     [HttpGet]
+    [EndpointGroupName("v1")]
     [ProducesResponseType(typeof(IEnumerable<ProductResponseV1>), StatusCodes.Status200OK)]
     public IActionResult GetAll()
     {
@@ -26,6 +28,7 @@ public class Productsv1Controller : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [EndpointGroupName("v1")]
     [ProducesResponseType(typeof(ProductResponseV1), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetById(Guid id)
@@ -37,6 +40,7 @@ public class Productsv1Controller : ControllerBase
     }
 
     [HttpPost]
+    [EndpointGroupName("v1")]
     [ProducesResponseType(typeof(ProductResponseV1), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Create([FromBody] CreateProductRequest request)
@@ -70,6 +74,7 @@ public class Productsv1Controller : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [EndpointGroupName("v1")]
     [ProducesResponseType(typeof(ProductResponseV1), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -96,6 +101,7 @@ public class Productsv1Controller : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [EndpointGroupName("v1")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult Delete(Guid id)
@@ -107,6 +113,7 @@ public class Productsv1Controller : ControllerBase
     }
 
     [HttpPatch("{id:guid}")]
+    [EndpointGroupName("v1")]
     [Consumes("application/merge-patch+json")]
     [ProducesResponseType(typeof(ProductResponseV1), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

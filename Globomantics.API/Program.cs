@@ -9,6 +9,19 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 
+builder.Services.AddOpenApi("v1", options =>
+{
+    options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
+    options.ShouldInclude = (description) =>
+    description.GroupName == null || description.GroupName == "v1";
+});
+
+builder.Services.AddOpenApi("v2", options =>
+{
+    options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
+    options.ShouldInclude = (description) =>
+    description.GroupName == null || description.GroupName == "v2";
+});
 
 var app = builder.Build();
 

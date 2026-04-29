@@ -1,8 +1,14 @@
 {
   "openapi": "3.1.1",
   "info": {
-    "title": "Globomantics.API | v1",
-    "version": "1.0.0"
+    "title": "Product Catalog API",
+    "description": "Product Catalog API v1.\r\n\r\n## Deprecation Notice\r\nSome fields in this version are deprecated. See individual field descriptions.\r\nMigrate to v2 before the sunset date.\r\n\r\n## Versioning Policy\r\n- New optional fields may be added at any time (non-breaking).\r\n- Clients SHOULD ignore unknown fields in responses.\r\n- See /docs/api-version-policy for full details.",
+    "contact": {
+      "name": "Globomantics Team",
+      "url": "https://globomantics.com/api-docs",
+      "email": "support@globomantics.com"
+    },
+    "version": "v1"
   },
   "paths": {
     "/Categories": {
@@ -251,11 +257,52 @@
         }
       }
     },
+    "/api/productsdemo/search": {
+      "get": {
+        "tags": [
+          "Brittle"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/v1/products": {
       "get": {
         "tags": [
           "Products"
         ],
+        "description": "**DEPRECATED**: This endpoint is deprecated. Use GET /v2/products instead.",
         "responses": {
           "200": {
             "description": "OK",
@@ -270,7 +317,9 @@
               }
             }
           }
-        }
+        },
+        "deprecated": true,
+        "x-sunset-date": "2027-12-31T23:59:59Z"
       },
       "post": {
         "tags": [

@@ -17,6 +17,7 @@ public class Productsv1Controller : ControllerBase
 {
     [HttpGet]
     [EndpointGroupName("v1")]
+    [Obsolete("This endpoint is deprecated. Use GET /v2/products instead.")]
     [ProducesResponseType(typeof(IEnumerable<ProductResponseV1>), StatusCodes.Status200OK)]
     public IActionResult GetAll()
     {

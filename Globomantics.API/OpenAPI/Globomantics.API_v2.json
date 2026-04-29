@@ -1,8 +1,14 @@
 {
   "openapi": "3.1.1",
   "info": {
-    "title": "Globomantics.API | v2",
-    "version": "1.0.0"
+    "title": "Product Catalog API",
+    "description": "Product Catalog API v2.\r\n\r\n## What's New in v2\r\n- Flat `price` field replaced by structured `pricing` object.\r\n- All new features target v2 going forward.",
+    "contact": {
+      "name": "Globomantics Team",
+      "url": "https://globomantics.com/api-docs",
+      "email": "support@globomantics.com"
+    },
+    "version": "v2"
   },
   "paths": {
     "/Categories": {
@@ -243,6 +249,46 @@
       "get": {
         "tags": [
           "Brittle"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/productsdemo/search": {
+      "get": {
+        "tags": [
+          "Brittle"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          }
         ],
         "responses": {
           "200": {

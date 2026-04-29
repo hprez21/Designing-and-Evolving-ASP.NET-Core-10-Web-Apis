@@ -1,4 +1,5 @@
 using Globomantics.API.Middleware;
+using Globomantics.API.Transformers;
 using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
 
@@ -14,6 +15,9 @@ builder.Services.AddOpenApi("v1", options =>
     options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
     options.ShouldInclude = (description) =>
     description.GroupName == null || description.GroupName == "v1";
+
+    options.AddOperationTransformer<DeprecationTransformer>();
+    options.AddDocumentTransformer<ApiInfoTransformer>();
 });
 
 builder.Services.AddOpenApi("v2", options =>
@@ -21,6 +25,9 @@ builder.Services.AddOpenApi("v2", options =>
     options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
     options.ShouldInclude = (description) =>
     description.GroupName == null || description.GroupName == "v2";
+
+    options.AddOperationTransformer<DeprecationTransformer>();
+    options.AddDocumentTransformer<ApiInfoTransformer>();
 });
 
 var app = builder.Build();
@@ -32,9 +39,23 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseExceptionHandler();
-app.UseStatusCodePages();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/api/productsdemo", out var remainingPath))
+    {
+        var newPath = $"/v1/productsdemo{remainingPath}{context.Request.QueryString}";
+        context.Response.Redirect(newPath, permanent: true);
+        return;
+    }
+
+    await next();
+});
 
 app.UseHttpsRedirection();
+
+app.UseStatusCodePages();
+
 app.UseAuthorization();
 
 app.UseMiddleware<DeprecationHeaderMiddleware>();

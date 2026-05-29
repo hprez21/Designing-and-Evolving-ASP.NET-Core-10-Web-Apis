@@ -8,6 +8,7 @@ public class UpdateProductRequest
     [StringLength(200, MinimumLength = 1)]
     public string Name { get; set; } = string.Empty;
 
+    [Required]
     public string? Description { get; set; }
 
     [Required]

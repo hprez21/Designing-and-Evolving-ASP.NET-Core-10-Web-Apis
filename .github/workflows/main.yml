@@ -1,0 +1,51 @@
+name: API Contract Governance
+
+on:  
+  push:
+    branches:
+      - master
+    paths:
+      - 'Globomantics.API/**'
+      - '.github/workflows/**'
+
+  pull_request:
+    paths:
+      - 'Globomantics.API/**'
+      - '.github/workflows/**'
+
+jobs:
+  check-breaking-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install oasdiff
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/Tufin/oasdiff/main/install.sh | sh
+
+      - name: Save committed baseline specs
+        run: |
+          mkdir -p /tmp/baseline
+          cp Globomantics.API/OpenAPI/Globomantics.API.json /tmp/baseline/v1.json
+          cp Globomantics.API/OpenAPI/Globomantics.API_v2.json /tmp/baseline/v2.json
+
+      - name: Build (regenerates OpenAPI specs)
+        run: dotnet build Globomantics.API/Globomantics.API.csproj
+
+      - name: Check v1 for breaking changes
+        run: |
+          echo "Comparing v1 baseline vs newly generated spec..."
+          oasdiff breaking /tmp/baseline/v1.json Globomantics.API/OpenAPI/Globomantics.API.json
+          echo "- No breaking changes in v1"
+
+      - name: Check v2 for breaking changes
+        run: |
+          echo "Comparing v2 baseline vs newly generated spec..."
+          oasdiff --fail-on WARN breaking /tmp/baseline/v2.json Globomantics.API/OpenAPI/Globomantics.API_v2.json
+          echo "- No breaking changes in v2"
+
